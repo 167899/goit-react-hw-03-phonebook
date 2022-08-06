@@ -13,6 +13,20 @@ export class App extends Component {
     ],
     filter: '',
   };
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+
+    if (parsedContacts) {
+      this.setState({contacts: parsedContacts})
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts))
+    }
+  }
 
   formSubmitState = data => {
     if (!this.state.contacts.find(e => e.name.toLowerCase() === data.name.toLowerCase())) {
@@ -40,14 +54,10 @@ export class App extends Component {
   };
 
   delContact = e => {
-    console.log('targetId:', e.target.parentElement.id);
-
     this.setState(prevState => {
       const delContacts = prevState.contacts.filter(
         contact => contact.id !== e.target.parentElement.id && contact.id
       );
-
-      console.log(delContacts);
 
       return {
         contacts: delContacts,
